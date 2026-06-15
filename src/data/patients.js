@@ -1,6 +1,7 @@
 const _now = Date.now()
 
-export const DEFAULT_THRESHOLDS = {
+// ── Neonatal thresholds (used for Baby Kiran) ──
+const NEONATAL_THRESHOLDS = {
   hr:   { warnLow: 110, critLow: 80,  warnHigh: 180, critHigh: 200 },
   spo2: { warnLow: 92,  critLow: 88,  warnHigh: null, critHigh: null },
   rr:   { warnLow: 30,  critLow: 20,  warnHigh: 65,  critHigh: 75  },
@@ -9,16 +10,27 @@ export const DEFAULT_THRESHOLDS = {
   map:  { warnLow: 40,  critLow: 30,  warnHigh: 65,  critHigh: 75  },
 }
 
+// ── Adult defaults — doctor should always customize per patient ──
+export const DEFAULT_THRESHOLDS = {
+  hr:   { warnLow: 50,  critLow: 40,   warnHigh: 120, critHigh: 150 },
+  spo2: { warnLow: 92,  critLow: 88,   warnHigh: null, critHigh: null },
+  rr:   { warnLow: 10,  critLow: 6,    warnHigh: 25,  critHigh: 30  },
+  sbp:  { warnLow: 90,  critLow: 70,   warnHigh: 160, critHigh: 180 },
+  dbp:  { warnLow: 50,  critLow: 40,   warnHigh: 100, critHigh: 110 },
+  map:  { warnLow: 65,  critLow: 50,   warnHigh: 110, critHigh: 120 },
+}
+
 export const VITAL_META = {
-  hr:   { label: 'Heart Rate',    unit: 'bpm',   icon: '♥', min: 40,  max: 220 },
-  spo2: { label: 'SpO₂',         unit: '%',      icon: '◉', min: 70,  max: 100 },
-  rr:   { label: 'Resp. Rate',    unit: 'br/min', icon: '≈', min: 10,  max: 100 },
-  sbp:  { label: 'BP systolic',   unit: 'mmHg',   icon: '↑', min: 20,  max: 120 },
-  dbp:  { label: 'BP diastolic',  unit: 'mmHg',   icon: '↓', min: 10,  max: 100 },
-  map:  { label: 'MAP',           unit: 'mmHg',   icon: '~', min: 10,  max: 100 },
+  hr:   { label: 'Heart Rate',    unit: 'bpm',   icon: '♥', min: 20,  max: 250 },
+  spo2: { label: 'SpO₂',         unit: '%',      icon: '◉', min: 50,  max: 100 },
+  rr:   { label: 'Resp. Rate',    unit: 'br/min', icon: '≈', min: 4,   max: 100 },
+  sbp:  { label: 'BP systolic',   unit: 'mmHg',   icon: '↑', min: 30,  max: 240 },
+  dbp:  { label: 'BP diastolic',  unit: 'mmHg',   icon: '↓', min: 10,  max: 150 },
+  map:  { label: 'MAP',           unit: 'mmHg',   icon: '~', min: 20,  max: 180 },
 }
 
 export const INITIAL_PATIENTS = [
+  // ── NICU ──────────────────────────────────────────────
   {
     id: 1,
     name: 'Baby Kiran',
@@ -29,7 +41,7 @@ export const INITIAL_PATIENTS = [
     bed: 'Bed 3',
     ward: 'NICU',
     dutyPhone: '+911234567890',
-    thresholds: JSON.parse(JSON.stringify(DEFAULT_THRESHOLDS)),
+    thresholds: JSON.parse(JSON.stringify(NEONATAL_THRESHOLDS)),
     vitals: { hr: 88, spo2: 87, rr: 48, sbp: 52, dbp: 32, map: 39 },
     sim: {
       hr:   { base: 88,  range: 10, maxDrift: 28 },
@@ -39,49 +51,66 @@ export const INITIAL_PATIENTS = [
       dbp:  { base: 32,  range: 3,  maxDrift: 8  },
     },
   },
+  // ── ICU — Post-op ─────────────────────────────────────
   {
     id: 2,
-    name: 'Baby Priya',
-    gender: 'F',
-    age: '5 days',
-    diagnosis: 'RDS',
-    support: 'Conv. Ventilator',
-    bed: 'Bed 7',
-    ward: 'NICU',
+    name: 'Mr. Arjun Kumar',
+    gender: 'M',
+    age: '58 years',
+    diagnosis: 'Post CABG (Day 1)',
+    support: 'T-piece / Noradrenaline',
+    bed: 'Bed 2',
+    ward: 'ICU',
     dutyPhone: '+911234567891',
-    thresholds: JSON.parse(JSON.stringify(DEFAULT_THRESHOLDS)),
-    vitals: { hr: 138, spo2: 93, rr: 52, sbp: 65, dbp: 42, map: 50 },
+    thresholds: {
+      hr:   { warnLow: 55,  critLow: 45,   warnHigh: 100, critHigh: 120 },
+      spo2: { warnLow: 94,  critLow: 90,   warnHigh: null, critHigh: null },
+      rr:   { warnLow: 10,  critLow: 6,    warnHigh: 22,  critHigh: 28  },
+      sbp:  { warnLow: 90,  critLow: 75,   warnHigh: 140, critHigh: 165 },
+      dbp:  { warnLow: 50,  critLow: 40,   warnHigh: 90,  critHigh: 100 },
+      map:  { warnLow: 65,  critLow: 50,   warnHigh: 100, critHigh: 110 },
+    },
+    vitals: { hr: 82, spo2: 97, rr: 16, sbp: 118, dbp: 72, map: 87 },
     sim: {
-      hr:   { base: 138, range: 8,  maxDrift: 28 },
-      spo2: { base: 93,  range: 2,  maxDrift: 7  },
-      rr:   { base: 52,  range: 5,  maxDrift: 12 },
-      sbp:  { base: 65,  range: 4,  maxDrift: 12 },
-      dbp:  { base: 42,  range: 3,  maxDrift: 8  },
+      hr:   { base: 82,  range: 5,  maxDrift: 15 },
+      spo2: { base: 97,  range: 1,  maxDrift: 3  },
+      rr:   { base: 16,  range: 2,  maxDrift: 5  },
+      sbp:  { base: 118, range: 6,  maxDrift: 18 },
+      dbp:  { base: 72,  range: 4,  maxDrift: 12 },
     },
   },
+  // ── Labor Room ────────────────────────────────────────
   {
     id: 3,
-    name: 'Baby Rohan',
-    gender: 'M',
-    age: '8 days',
-    diagnosis: 'Neonatal Sepsis',
-    support: 'CPAP',
-    bed: 'Bed 12',
-    ward: 'NICU',
+    name: 'Mrs. Sunita Devi',
+    gender: 'F',
+    age: '28 years',
+    diagnosis: 'Severe Pre-eclampsia',
+    support: 'IV MgSO₄ / Hydralazine PRN',
+    bed: 'LR Bed 1',
+    ward: 'Labor Room',
     dutyPhone: '+911234567892',
-    thresholds: JSON.parse(JSON.stringify(DEFAULT_THRESHOLDS)),
-    vitals: { hr: 142, spo2: 96, rr: 45, sbp: 72, dbp: 48, map: 56 },
+    thresholds: {
+      hr:   { warnLow: 60,  critLow: 50,   warnHigh: 110, critHigh: 130 },
+      spo2: { warnLow: 94,  critLow: 90,   warnHigh: null, critHigh: null },
+      rr:   { warnLow: 12,  critLow: 8,    warnHigh: 24,  critHigh: 30  },
+      sbp:  { warnLow: 100, critLow: 80,   warnHigh: 155, critHigh: 170 },
+      dbp:  { warnLow: 60,  critLow: 50,   warnHigh: 100, critHigh: 110 },
+      map:  { warnLow: 70,  critLow: 55,   warnHigh: 110, critHigh: 120 },
+    },
+    vitals: { hr: 96, spo2: 98, rr: 20, sbp: 158, dbp: 104, map: 122 },
     sim: {
-      hr:   { base: 142, range: 5,  maxDrift: 16 },
-      spo2: { base: 96,  range: 1,  maxDrift: 4  },
-      rr:   { base: 45,  range: 4,  maxDrift: 10 },
-      sbp:  { base: 72,  range: 3,  maxDrift: 10 },
-      dbp:  { base: 48,  range: 2,  maxDrift: 7  },
+      hr:   { base: 96,  range: 6,  maxDrift: 18 },
+      spo2: { base: 98,  range: 1,  maxDrift: 2  },
+      rr:   { base: 20,  range: 2,  maxDrift: 6  },
+      sbp:  { base: 158, range: 8,  maxDrift: 20 },
+      dbp:  { base: 104, range: 5,  maxDrift: 15 },
     },
   },
 ]
 
 export const INITIAL_COMMENTS = [
+  // Baby Kiran — NICU
   {
     id: 101,
     patientId: 1,
@@ -106,26 +135,36 @@ export const INITIAL_COMMENTS = [
     time: new Date(_now - 10 * 3600000).toISOString(),
     type: 'order',
   },
+  // Mr. Arjun Kumar — ICU
   {
     id: 201,
     patientId: 2,
-    text: 'Surfactant dose 2 (Poractant alfa 100 mg/kg) given at 0800h. Repeat chest X-ray at 1200h and share on WhatsApp.',
+    text: 'Noradrenaline 0.05 mcg/kg/min. Target MAP 65–90. If MAP <60 for >5 min — increase norad to 0.1 mcg/kg/min and call me.',
     author: 'Dr. Sunil',
-    time: new Date(_now - 4 * 3600000).toISOString(),
+    time: new Date(_now - 1.5 * 3600000).toISOString(),
     type: 'order',
   },
   {
     id: 202,
     patientId: 2,
-    text: 'Good response to 2nd surfactant dose. Wean FiO₂ by 5% every 30 min if SpO₂ >94%. Target SpO₂ 91–95%.',
+    text: 'Post-CABG Day 1. Heparin infusion 800 u/hr — recheck ACT at 0600h, target 200–250s. Aspirin 75mg + atorvastatin 40mg via NG.',
     author: 'Dr. Sunil',
-    time: new Date(_now - 1.5 * 3600000).toISOString(),
+    time: new Date(_now - 4 * 3600000).toISOString(),
     type: 'note',
   },
   {
+    id: 203,
+    patientId: 2,
+    text: 'If SBP >150 or HR >110 — check pain score first. IV metoprolol 2.5mg if HR >110 with adequate BP. Do not give if SBP <100.',
+    author: 'Dr. Sunil',
+    time: new Date(_now - 6 * 3600000).toISOString(),
+    type: 'order',
+  },
+  // Mrs. Sunita Devi — Labor Room
+  {
     id: 301,
     patientId: 3,
-    text: 'Blood culture sent yesterday evening. Continue meropenem 40 mg/kg/day + vancomycin 15 mg/kg/dose Q6h until reports.',
+    text: 'MgSO₄ maintenance 2g/hr IV. Monitor urine output — target >30 mL/hr. Recheck magnesium levels at 0600h.',
     author: 'Dr. Sunil',
     time: new Date(_now - 1 * 3600000).toISOString(),
     type: 'order',
@@ -133,7 +172,15 @@ export const INITIAL_COMMENTS = [
   {
     id: 302,
     patientId: 3,
-    text: 'CRP this morning 48 mg/L (down from 82 yesterday) — good trend. Repeat CBC + CRP tomorrow 6 AM. Platelet transfusion if <50k.',
+    text: 'Target BP <155/100. If diastolic >110 or SBP >160 — give hydralazine 5 mg IV stat. Repeat after 20 min if no response.',
+    author: 'Dr. Sunil',
+    time: new Date(_now - 2.5 * 3600000).toISOString(),
+    type: 'order',
+  },
+  {
+    id: 303,
+    patientId: 3,
+    text: 'CTG looks reassuring at last check. Fetal HR 138 — good variability. Continue continuous CTG monitoring. Call if late decelerations.',
     author: 'Dr. Sunil',
     time: new Date(_now - 3 * 3600000).toISOString(),
     type: 'note',

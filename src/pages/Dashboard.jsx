@@ -61,7 +61,7 @@ function AddPatientModal({ onClose, onAdd }) {
           <div className="form-row-2">
             <div className="form-row">
               <label>Patient name</label>
-              <input required placeholder="e.g. Baby Kumar" value={form.name} onChange={e => set('name', e.target.value)} />
+              <input required placeholder="e.g. Mr. Sharma / Baby Kiran" value={form.name} onChange={e => set('name', e.target.value)} />
             </div>
             <div className="form-row">
               <label>Gender</label>
@@ -74,15 +74,19 @@ function AddPatientModal({ onClose, onAdd }) {
           <div className="form-row-2">
             <div className="form-row">
               <label>Age</label>
-              <input required placeholder="e.g. 3 days" value={form.age} onChange={e => set('age', e.target.value)} />
+              <input required placeholder="e.g. 2 days / 5 yrs / 58 yrs" value={form.age} onChange={e => set('age', e.target.value)} />
             </div>
             <div className="form-row">
-              <label>Ward</label>
+              <label>Ward / Setting</label>
               <select value={form.ward} onChange={e => set('ward', e.target.value)}>
+                <option>ICU</option>
                 <option>NICU</option>
                 <option>PICU</option>
-                <option>ICU</option>
+                <option>Post-op Ward</option>
+                <option>HDU</option>
+                <option>Labor Room</option>
                 <option>General Ward</option>
+                <option>Emergency</option>
               </select>
             </div>
           </div>
@@ -145,13 +149,13 @@ export default function Dashboard() {
             <p className="dash-hero__greeting">Good {getTimeOfDay()}, Dr. Sunil</p>
             <h1 className="dash-hero__title">Your patients.<br />Your eyes.<br />From anywhere.</h1>
             <p className="dash-hero__sub">
-              Monitor your admitted patients in real-time — live camera, live vitals, instant alerts — right from your phone or laptop.
+              ICU · NICU · PICU · Post-op · Labor Room · General Ward — any patient who needs watching, monitored by you, personally, from anywhere.
             </p>
             <button className="btn-tut-big" onClick={() => navigate('/tutorial')}>
               <span className="btn-tut-big__icon">📖</span>
               <span>
                 <span className="btn-tut-big__title">How OnCallDoc works</span>
-                <span className="btn-tut-big__sub">Setup guide · clinical workflow · real scenarios</span>
+                <span className="btn-tut-big__sub">ICU · NICU · Post-op · Labor room · Any ward</span>
               </span>
               <span className="btn-tut-big__arrow">→</span>
             </button>
