@@ -5,7 +5,7 @@ import { getVitalSeverity } from '../components/VitalCard.jsx'
 import { DEFAULT_THRESHOLDS, INITIAL_PATIENTS } from '../data/patients.js'
 
 function getPatientStatus(patient) {
-  const vitals = ['hr', 'spo2', 'rr', 'bp']
+  const vitals = ['hr', 'spo2', 'rr', 'sbp', 'dbp', 'map']
   const sevs   = vitals.map(v => getVitalSeverity(v, patient.vitals[v], patient.thresholds[v]))
   if (sevs.includes('critical')) return 'critical'
   if (sevs.includes('warning'))  return 'warning'
@@ -32,12 +32,13 @@ function AddPatientModal({ onClose, onAdd }) {
       id: Date.now(),
       ...form,
       thresholds: JSON.parse(JSON.stringify(DEFAULT_THRESHOLDS)),
-      vitals: { hr: 140, spo2: 95, rr: 45, bp: 55 },
+      vitals: { hr: 140, spo2: 95, rr: 45, sbp: 65, dbp: 42, map: 50 },
       sim: {
         hr:   { base: 140, range: 6,  maxDrift: 20 },
         spo2: { base: 95,  range: 1,  maxDrift: 5  },
         rr:   { base: 45,  range: 4,  maxDrift: 10 },
-        bp:   { base: 55,  range: 3,  maxDrift: 8  },
+        sbp:  { base: 65,  range: 4,  maxDrift: 12 },
+        dbp:  { base: 42,  range: 3,  maxDrift: 8  },
       },
     }
     onAdd(newPatient)
@@ -161,12 +162,12 @@ export default function Dashboard() {
                   </span>
                 </div>
                 <div className="card-vitals">
-                  {['hr', 'spo2', 'rr', 'bp'].map(v => {
+                  {['hr', 'spo2', 'rr'].map(v => {
                     const sev = getVitalSeverity(v, patient.vitals[v], patient.thresholds[v])
                     return (
                       <div key={v} className="mini-v">
                         <span className="mini-v__lbl">
-                          {v === 'hr' ? 'HR' : v === 'spo2' ? 'SpO₂' : v === 'rr' ? 'RR' : 'BP'}
+                          {v === 'hr' ? 'HR' : v === 'spo2' ? 'SpO₂' : 'RR'}
                         </span>
                         <span className={`mini-v__val mini-v__val--${sev}`}>
                           {patient.vitals[v]}{v === 'spo2' ? '%' : ''}
@@ -174,6 +175,18 @@ export default function Dashboard() {
                       </div>
                     )
                   })}
+                  <div className="mini-v">
+                    <span className="mini-v__lbl">SBP/DBP</span>
+                    <span className={`mini-v__val mini-v__val--${getVitalSeverity('sbp', patient.vitals.sbp, patient.thresholds.sbp)}`}>
+                      {patient.vitals.sbp}/{patient.vitals.dbp}
+                    </span>
+                  </div>
+                  <div className="mini-v">
+                    <span className="mini-v__lbl">MAP</span>
+                    <span className={`mini-v__val mini-v__val--${getVitalSeverity('map', patient.vitals.map, patient.thresholds.map)}`}>
+                      {patient.vitals.map}
+                    </span>
+                  </div>
                   {lastAlert && (
                     <div className="card-last-alert">
                       <span style={{ color: lastAlert.severity === 'critical' ? 'var(--critical)' : 'var(--warning)', fontSize: 11 }}>

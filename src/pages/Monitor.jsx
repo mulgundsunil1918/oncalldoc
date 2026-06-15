@@ -46,26 +46,36 @@ function sendNotification(title, body) {
 
 // ── Alert definitions ──────────────────────────────────
 function buildAlertChecks(vitals, thresholds) {
-  const { hr, spo2, rr, bp } = vitals
+  const { hr, spo2, rr, sbp, dbp, map } = vitals
   const t = thresholds
   return [
-    { key: 'hr_crit_low',   value: hr,   thr: t.hr.critLow,   dir: 'low',  sev: 'critical', msg: `HR critically low: ${hr} bpm`           },
-    { key: 'hr_warn_low',   value: hr,   thr: t.hr.warnLow,   dir: 'low',  sev: 'warning',  msg: `HR below warning limit: ${hr} bpm`       },
-    { key: 'hr_crit_high',  value: hr,   thr: t.hr.critHigh,  dir: 'high', sev: 'critical', msg: `HR critically high: ${hr} bpm`          },
-    { key: 'hr_warn_high',  value: hr,   thr: t.hr.warnHigh,  dir: 'high', sev: 'warning',  msg: `HR above warning limit: ${hr} bpm`      },
-    { key: 'spo2_crit_low', value: spo2, thr: t.spo2.critLow, dir: 'low',  sev: 'critical', msg: `SpO₂ critically low: ${spo2}%`          },
-    { key: 'spo2_warn_low', value: spo2, thr: t.spo2.warnLow, dir: 'low',  sev: 'warning',  msg: `SpO₂ below warning limit: ${spo2}%`     },
-    { key: 'rr_crit_low',   value: rr,   thr: t.rr.critLow,   dir: 'low',  sev: 'critical', msg: `RR critically low: ${rr} br/min`        },
-    { key: 'rr_warn_low',   value: rr,   thr: t.rr.warnLow,   dir: 'low',  sev: 'warning',  msg: `RR below warning limit: ${rr} br/min`   },
-    { key: 'rr_crit_high',  value: rr,   thr: t.rr.critHigh,  dir: 'high', sev: 'critical', msg: `RR critically high: ${rr} br/min`       },
-    { key: 'rr_warn_high',  value: rr,   thr: t.rr.warnHigh,  dir: 'high', sev: 'warning',  msg: `RR above warning limit: ${rr} br/min`  },
-    { key: 'bp_crit_low',   value: bp,   thr: t.bp.critLow,   dir: 'low',  sev: 'critical', msg: `BP critically low: ${bp} mmHg`          },
-    { key: 'bp_warn_low',   value: bp,   thr: t.bp.warnLow,   dir: 'low',  sev: 'warning',  msg: `BP below warning limit: ${bp} mmHg`     },
+    { key: 'hr_crit_low',   value: hr,  thr: t.hr.critLow,   dir: 'low',  sev: 'critical', msg: `HR critically low: ${hr} bpm`            },
+    { key: 'hr_warn_low',   value: hr,  thr: t.hr.warnLow,   dir: 'low',  sev: 'warning',  msg: `HR below warning: ${hr} bpm`             },
+    { key: 'hr_crit_high',  value: hr,  thr: t.hr.critHigh,  dir: 'high', sev: 'critical', msg: `HR critically high: ${hr} bpm`           },
+    { key: 'hr_warn_high',  value: hr,  thr: t.hr.warnHigh,  dir: 'high', sev: 'warning',  msg: `HR above warning: ${hr} bpm`            },
+    { key: 'spo2_crit_low', value: spo2,thr: t.spo2.critLow, dir: 'low',  sev: 'critical', msg: `SpO₂ critically low: ${spo2}%`           },
+    { key: 'spo2_warn_low', value: spo2,thr: t.spo2.warnLow, dir: 'low',  sev: 'warning',  msg: `SpO₂ below warning: ${spo2}%`           },
+    { key: 'rr_crit_low',   value: rr,  thr: t.rr.critLow,   dir: 'low',  sev: 'critical', msg: `RR critically low: ${rr} br/min`         },
+    { key: 'rr_warn_low',   value: rr,  thr: t.rr.warnLow,   dir: 'low',  sev: 'warning',  msg: `RR below warning: ${rr} br/min`         },
+    { key: 'rr_crit_high',  value: rr,  thr: t.rr.critHigh,  dir: 'high', sev: 'critical', msg: `RR critically high: ${rr} br/min`        },
+    { key: 'rr_warn_high',  value: rr,  thr: t.rr.warnHigh,  dir: 'high', sev: 'warning',  msg: `RR above warning: ${rr} br/min`         },
+    { key: 'sbp_crit_low',  value: sbp, thr: t.sbp.critLow,  dir: 'low',  sev: 'critical', msg: `SBP critically low: ${sbp} mmHg`         },
+    { key: 'sbp_warn_low',  value: sbp, thr: t.sbp.warnLow,  dir: 'low',  sev: 'warning',  msg: `SBP below warning: ${sbp} mmHg`         },
+    { key: 'sbp_crit_high', value: sbp, thr: t.sbp.critHigh, dir: 'high', sev: 'critical', msg: `SBP critically high: ${sbp} mmHg`        },
+    { key: 'sbp_warn_high', value: sbp, thr: t.sbp.warnHigh, dir: 'high', sev: 'warning',  msg: `SBP above warning: ${sbp} mmHg`         },
+    { key: 'dbp_crit_low',  value: dbp, thr: t.dbp.critLow,  dir: 'low',  sev: 'critical', msg: `DBP critically low: ${dbp} mmHg`         },
+    { key: 'dbp_warn_low',  value: dbp, thr: t.dbp.warnLow,  dir: 'low',  sev: 'warning',  msg: `DBP below warning: ${dbp} mmHg`         },
+    { key: 'dbp_crit_high', value: dbp, thr: t.dbp.critHigh, dir: 'high', sev: 'critical', msg: `DBP critically high: ${dbp} mmHg`        },
+    { key: 'dbp_warn_high', value: dbp, thr: t.dbp.warnHigh, dir: 'high', sev: 'warning',  msg: `DBP above warning: ${dbp} mmHg`         },
+    { key: 'map_crit_low',  value: map, thr: t.map.critLow,  dir: 'low',  sev: 'critical', msg: `MAP critically low: ${map} mmHg`         },
+    { key: 'map_warn_low',  value: map, thr: t.map.warnLow,  dir: 'low',  sev: 'warning',  msg: `MAP below warning: ${map} mmHg`         },
+    { key: 'map_crit_high', value: map, thr: t.map.critHigh, dir: 'high', sev: 'critical', msg: `MAP critically high: ${map} mmHg`        },
+    { key: 'map_warn_high', value: map, thr: t.map.warnHigh, dir: 'high', sev: 'warning',  msg: `MAP above warning: ${map} mmHg`         },
   ]
 }
 
 function getPatientStatus(patient) {
-  const vitals = ['hr', 'spo2', 'rr', 'bp']
+  const vitals = ['hr', 'spo2', 'rr', 'sbp', 'dbp', 'map']
   const sevs   = vitals.map(v => getVitalSeverity(v, patient.vitals[v], patient.thresholds[v]))
   if (sevs.includes('critical')) return 'critical'
   if (sevs.includes('warning'))  return 'warning'
@@ -110,12 +120,16 @@ export default function Monitor() {
         hr:   simStep(vitals.hr,   p.sim.hr),
         spo2: simStep(vitals.spo2, p.sim.spo2),
         rr:   simStep(vitals.rr,   p.sim.rr),
-        bp:   simStep(vitals.bp,   p.sim.bp),
+        sbp:  simStep(vitals.sbp,  p.sim.sbp),
+        dbp:  simStep(vitals.dbp,  p.sim.dbp),
       }
+      next.map = Math.round((next.sbp + 2 * next.dbp) / 3)
       vitals.hr   = next.hr
       vitals.spo2 = next.spo2
       vitals.rr   = next.rr
-      vitals.bp   = next.bp
+      vitals.sbp  = next.sbp
+      vitals.dbp  = next.dbp
+      vitals.map  = next.map
       updateVitals(p.id, { ...next })
     }, 2000)
 
@@ -153,7 +167,7 @@ export default function Monitor() {
         c.msg,
       )
     })
-  }, [patient?.vitals?.hr, patient?.vitals?.spo2, patient?.vitals?.rr, patient?.vitals?.bp]) // eslint-disable-line
+  }, [patient?.vitals?.hr, patient?.vitals?.spo2, patient?.vitals?.rr, patient?.vitals?.sbp, patient?.vitals?.dbp, patient?.vitals?.map]) // eslint-disable-line
 
   if (!patient) {
     return (
@@ -205,11 +219,13 @@ export default function Monitor() {
           </div>
 
           <p className="section-title">Live vitals</p>
-          <div className="vitals-grid">
+          <div className="vitals-grid vitals-grid--3col">
             <VitalCard vital="hr"   value={patient.vitals.hr}   thresholds={patient.thresholds.hr}   />
             <VitalCard vital="spo2" value={patient.vitals.spo2} thresholds={patient.thresholds.spo2} />
             <VitalCard vital="rr"   value={patient.vitals.rr}   thresholds={patient.thresholds.rr}   />
-            <VitalCard vital="bp"   value={patient.vitals.bp}   thresholds={patient.thresholds.bp}   />
+            <VitalCard vital="sbp"  value={patient.vitals.sbp}  thresholds={patient.thresholds.sbp}  />
+            <VitalCard vital="dbp"  value={patient.vitals.dbp}  thresholds={patient.thresholds.dbp}  />
+            <VitalCard vital="map"  value={patient.vitals.map}  thresholds={patient.thresholds.map}  />
           </div>
         </div>
 
