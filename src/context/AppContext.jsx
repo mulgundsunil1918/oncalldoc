@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, useCallback } from 'react'
-import { INITIAL_PATIENTS } from '../data/patients.js'
+import { INITIAL_PATIENTS, INITIAL_COMMENTS } from '../data/patients.js'
 
 const Ctx = createContext(null)
 
@@ -37,6 +37,10 @@ function reducer(state, action) {
       }
     case 'ADD_PATIENT':
       return { ...state, patients: [...state.patients, action.patient] }
+    case 'ADD_COMMENT':
+      return { ...state, comments: [action.comment, ...state.comments] }
+    case 'TOGGLE_SOUND':
+      return { ...state, soundEnabled: !state.soundEnabled }
     default:
       return state
   }
@@ -44,17 +48,21 @@ function reducer(state, action) {
 
 export function AppProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, {
-    patients: INITIAL_PATIENTS,
-    alerts: [],
+    patients:     INITIAL_PATIENTS,
+    alerts:       [],
+    comments:     INITIAL_COMMENTS,
+    soundEnabled: true,
   })
 
-  const updateVitals  = useCallback((id, vitals) => dispatch({ type: 'UPDATE_VITALS', id, vitals }), [])
-  const addAlert      = useCallback((alert)      => dispatch({ type: 'ADD_ALERT', alert }), [])
-  const setThreshold  = useCallback((id, vital, key, value) => dispatch({ type: 'SET_THRESHOLD', id, vital, key, value }), [])
-  const addPatient    = useCallback((patient)    => dispatch({ type: 'ADD_PATIENT', patient }), [])
+  const updateVitals = useCallback((id, vitals)              => dispatch({ type: 'UPDATE_VITALS', id, vitals }), [])
+  const addAlert     = useCallback((alert)                   => dispatch({ type: 'ADD_ALERT', alert }), [])
+  const setThreshold = useCallback((id, vital, key, value)   => dispatch({ type: 'SET_THRESHOLD', id, vital, key, value }), [])
+  const addPatient   = useCallback((patient)                 => dispatch({ type: 'ADD_PATIENT', patient }), [])
+  const addComment   = useCallback((comment)                 => dispatch({ type: 'ADD_COMMENT', comment }), [])
+  const toggleSound  = useCallback(()                        => dispatch({ type: 'TOGGLE_SOUND' }), [])
 
   return (
-    <Ctx.Provider value={{ state, updateVitals, addAlert, setThreshold, addPatient }}>
+    <Ctx.Provider value={{ state, updateVitals, addAlert, setThreshold, addPatient, addComment, toggleSound }}>
       {children}
     </Ctx.Provider>
   )

@@ -1,3 +1,5 @@
+const _now = Date.now()
+
 export const DEFAULT_THRESHOLDS = {
   hr:   { warnLow: 110, critLow: 80,  warnHigh: 180, critHigh: 200 },
   spo2: { warnLow: 92,  critLow: 88,  warnHigh: null, critHigh: null },
@@ -26,6 +28,7 @@ export const INITIAL_PATIENTS = [
     support: 'HFO Ventilator',
     bed: 'Bed 3',
     ward: 'NICU',
+    dutyPhone: '+911234567890',
     thresholds: JSON.parse(JSON.stringify(DEFAULT_THRESHOLDS)),
     vitals: { hr: 88, spo2: 87, rr: 48, sbp: 52, dbp: 32, map: 39 },
     sim: {
@@ -45,6 +48,7 @@ export const INITIAL_PATIENTS = [
     support: 'Conv. Ventilator',
     bed: 'Bed 7',
     ward: 'NICU',
+    dutyPhone: '+911234567891',
     thresholds: JSON.parse(JSON.stringify(DEFAULT_THRESHOLDS)),
     vitals: { hr: 138, spo2: 93, rr: 52, sbp: 65, dbp: 42, map: 50 },
     sim: {
@@ -64,6 +68,7 @@ export const INITIAL_PATIENTS = [
     support: 'CPAP',
     bed: 'Bed 12',
     ward: 'NICU',
+    dutyPhone: '+911234567892',
     thresholds: JSON.parse(JSON.stringify(DEFAULT_THRESHOLDS)),
     vitals: { hr: 142, spo2: 96, rr: 45, sbp: 72, dbp: 48, map: 56 },
     sim: {
@@ -73,5 +78,64 @@ export const INITIAL_PATIENTS = [
       sbp:  { base: 72,  range: 3,  maxDrift: 10 },
       dbp:  { base: 48,  range: 2,  maxDrift: 7  },
     },
+  },
+]
+
+export const INITIAL_COMMENTS = [
+  {
+    id: 101,
+    patientId: 1,
+    text: 'Increase iNO to 20 ppm if MAP stays below 40 for more than 15 min. Call me if no improvement within 30 min.',
+    author: 'Dr. Sunil',
+    time: new Date(_now - 2 * 3600000).toISOString(),
+    type: 'order',
+  },
+  {
+    id: 102,
+    patientId: 1,
+    text: 'Echo this morning — moderate RV dysfunction, D-shaped septum. Continue sildenafil 2 mg/kg/day. iNO currently at 15 ppm.',
+    author: 'Dr. Sunil',
+    time: new Date(_now - 6 * 3600000).toISOString(),
+    type: 'note',
+  },
+  {
+    id: 103,
+    patientId: 1,
+    text: 'If SpO₂ drops below 82% — give rescue adrenaline 0.1 mg/kg IV stat and call me IMMEDIATELY. Do NOT wait.',
+    author: 'Dr. Sunil',
+    time: new Date(_now - 10 * 3600000).toISOString(),
+    type: 'order',
+  },
+  {
+    id: 201,
+    patientId: 2,
+    text: 'Surfactant dose 2 (Poractant alfa 100 mg/kg) given at 0800h. Repeat chest X-ray at 1200h and share on WhatsApp.',
+    author: 'Dr. Sunil',
+    time: new Date(_now - 4 * 3600000).toISOString(),
+    type: 'order',
+  },
+  {
+    id: 202,
+    patientId: 2,
+    text: 'Good response to 2nd surfactant dose. Wean FiO₂ by 5% every 30 min if SpO₂ >94%. Target SpO₂ 91–95%.',
+    author: 'Dr. Sunil',
+    time: new Date(_now - 1.5 * 3600000).toISOString(),
+    type: 'note',
+  },
+  {
+    id: 301,
+    patientId: 3,
+    text: 'Blood culture sent yesterday evening. Continue meropenem 40 mg/kg/day + vancomycin 15 mg/kg/dose Q6h until reports.',
+    author: 'Dr. Sunil',
+    time: new Date(_now - 1 * 3600000).toISOString(),
+    type: 'order',
+  },
+  {
+    id: 302,
+    patientId: 3,
+    text: 'CRP this morning 48 mg/L (down from 82 yesterday) — good trend. Repeat CBC + CRP tomorrow 6 AM. Platelet transfusion if <50k.',
+    author: 'Dr. Sunil',
+    time: new Date(_now - 3 * 3600000).toISOString(),
+    type: 'note',
   },
 ]

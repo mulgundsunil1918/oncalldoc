@@ -4,12 +4,13 @@ import { useApp } from '../context/AppContext.jsx'
 import VitalCard, { getVitalSeverity } from '../components/VitalCard.jsx'
 import AlertLog from '../components/AlertLog.jsx'
 import ThresholdPanel from '../components/ThresholdPanel.jsx'
+import CommentPanel from '../components/CommentPanel.jsx'
 
 // ── Vitals simulation ──────────────────────────────────
 function simStep(current, sim) {
-  const noise  = (Math.random() - 0.5) * sim.range
+  const noise   = (Math.random() - 0.5) * sim.range
   const pullback = (sim.base - current) * 0.15
-  const next   = current + noise + pullback
+  const next    = current + noise + pullback
   return Math.round(Math.max(sim.base - sim.maxDrift, Math.min(sim.base + sim.maxDrift, next)))
 }
 
@@ -85,30 +86,28 @@ function getPatientStatus(patient) {
 export default function Monitor() {
   const { id }     = useParams()
   const navigate   = useNavigate()
-  const { state, updateVitals, addAlert, setThreshold } = useApp()
+  const { state, updateVitals, addAlert, setThreshold, addComment, toggleSound } = useApp()
 
   const patient       = state.patients.find(p => p.id === parseInt(id))
   const patientRef    = useRef(patient)
   const lastAlerted   = useRef({})
+  const soundRef      = useRef(state.soundEnabled)
   const [liveDot, setLiveDot] = useState(true)
 
-  // keep ref fresh each render so simulation closure can read latest sim params
   useEffect(() => { patientRef.current = patient }, [patient])
+  useEffect(() => { soundRef.current = state.soundEnabled }, [state.soundEnabled])
 
-  // request browser notification permission
   useEffect(() => {
     if (typeof Notification !== 'undefined' && Notification.permission === 'default') {
       Notification.requestPermission()
     }
   }, [])
 
-  // blinking live dot
   useEffect(() => {
     const t = setInterval(() => setLiveDot(d => !d), 700)
     return () => clearInterval(t)
   }, [])
 
-  // vitals simulation — restart only when patient changes
   useEffect(() => {
     if (!patient) return
     const vitals = { ...patient.vitals }
@@ -136,7 +135,6 @@ export default function Monitor() {
     return () => clearInterval(t)
   }, [id]) // eslint-disable-line
 
-  // alert engine — runs every time vitals change
   useEffect(() => {
     if (!patient) return
     const DEBOUNCE_MS = 20_000
@@ -161,7 +159,7 @@ export default function Monitor() {
         time:        new Date().toISOString(),
       })
 
-      playBeep(c.sev === 'critical')
+      if (soundRef.current) playBeep(c.sev === 'critical')
       sendNotification(
         `${c.sev === 'critical' ? '🚨' : '⚠️'} OnCallDoc — ${patient.name}`,
         c.msg,
@@ -173,14 +171,12 @@ export default function Monitor() {
     return (
       <div style={{ padding: 40, textAlign: 'center' }}>
         Patient not found.{' '}
-        <span style={{ color: 'var(--brand)', cursor: 'pointer' }} onClick={() => navigate('/')}>
-          Go back
-        </span>
+        <span style={{ color: 'var(--brand)', cursor: 'pointer' }} onClick={() => navigate('/')}>Go back</span>
       </div>
     )
   }
 
-  const status       = getPatientStatus(patient)
+  const status        = getPatientStatus(patient)
   const patientAlerts = state.alerts.filter(a => a.patientId === patient.id)
 
   return (
@@ -190,6 +186,13 @@ export default function Monitor() {
           <span className="navbar__logo">OnCallDoc</span>
         </div>
         <div className="navbar__right">
+          <button
+            className={`sound-toggle${state.soundEnabled ? '' : ' sound-toggle--off'}`}
+            onClick={toggleSound}
+            title={state.soundEnabled ? 'Sound ON — click to mute' : 'Sound OFF — click to unmute'}
+          >
+            {state.soundEnabled ? '🔔 Sound ON' : '🔕 Sound OFF'}
+          </button>
           <span className="navbar__bell">🔔</span>
         </div>
       </nav>
@@ -200,9 +203,14 @@ export default function Monitor() {
           <h2>{patient.name} · {patient.gender} · {patient.age}</h2>
           <p>{patient.diagnosis} · {patient.support} · {patient.bed} · {patient.ward}</p>
         </div>
-        <span className={`badge badge--${status}`}>
-          {status === 'critical' ? '🔴 Critical' : status === 'warning' ? '🟡 Watch' : '🟢 Stable'}
-        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <a href={`tel:${patient.dutyPhone}`} className="call-btn">
+            📞 Call Ward
+          </a>
+          <span className={`badge badge--${status}`}>
+            {status === 'critical' ? '🔴 Critical' : status === 'warning' ? '🟡 Watch' : '🟢 Stable'}
+          </span>
+        </div>
       </div>
 
       <div className="monitor-body">
@@ -229,9 +237,14 @@ export default function Monitor() {
           </div>
         </div>
 
-        {/* ── Right: alerts + thresholds ── */}
+        {/* ── Right: alerts + comments + thresholds ── */}
         <div className="right-panel">
           <AlertLog alerts={patientAlerts} />
+          <CommentPanel
+            patientId={patient.id}
+            comments={state.comments}
+            onAddComment={addComment}
+          />
           <ThresholdPanel patient={patient} onSetThreshold={setThreshold} />
         </div>
       </div>
