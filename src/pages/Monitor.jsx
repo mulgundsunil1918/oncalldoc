@@ -5,6 +5,7 @@ import VitalCard, { getVitalSeverity } from '../components/VitalCard.jsx'
 import AlertLog from '../components/AlertLog.jsx'
 import ThresholdPanel from '../components/ThresholdPanel.jsx'
 import CommentPanel from '../components/CommentPanel.jsx'
+import BPCard from '../components/BPCard.jsx'
 
 // ── Vitals simulation ──────────────────────────────────
 function simStep(current, sim) {
@@ -227,13 +228,11 @@ export default function Monitor() {
           </div>
 
           <p className="section-title">Live vitals</p>
-          <div className="vitals-grid vitals-grid--3col">
+          <div className="vitals-grid">
             <VitalCard vital="hr"   value={patient.vitals.hr}   thresholds={patient.thresholds.hr}   />
             <VitalCard vital="spo2" value={patient.vitals.spo2} thresholds={patient.thresholds.spo2} />
             <VitalCard vital="rr"   value={patient.vitals.rr}   thresholds={patient.thresholds.rr}   />
-            <VitalCard vital="sbp"  value={patient.vitals.sbp}  thresholds={patient.thresholds.sbp}  />
-            <VitalCard vital="dbp"  value={patient.vitals.dbp}  thresholds={patient.thresholds.dbp}  />
-            <VitalCard vital="map"  value={patient.vitals.map}  thresholds={patient.thresholds.map}  />
+            <BPCard vitals={patient.vitals} thresholds={patient.thresholds} />
           </div>
         </div>
 

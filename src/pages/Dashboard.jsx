@@ -256,16 +256,14 @@ export default function Dashboard() {
                     )
                   })}
                   <div className="mini-v">
-                    <span className="mini-v__lbl">SBP/DBP</span>
-                    <span className={`mini-v__val mini-v__val--${getVitalSeverity('sbp', patient.vitals.sbp, patient.thresholds.sbp)}`}>
+                    <span className="mini-v__lbl">BP</span>
+                    <span className={`mini-v__val mini-v__val--${
+                      ['sbp','dbp','map'].map(v => getVitalSeverity(v, patient.vitals[v], patient.thresholds[v]))
+                        .reduce((w, s) => s === 'critical' ? 'critical' : w === 'critical' ? 'critical' : s, 'stable')
+                    }`}>
                       {patient.vitals.sbp}/{patient.vitals.dbp}
                     </span>
-                  </div>
-                  <div className="mini-v">
-                    <span className="mini-v__lbl">MAP</span>
-                    <span className={`mini-v__val mini-v__val--${getVitalSeverity('map', patient.vitals.map, patient.thresholds.map)}`}>
-                      {patient.vitals.map}
-                    </span>
+                    <span className="mini-v__sub">MAP {patient.vitals.map}</span>
                   </div>
                 </div>
 
