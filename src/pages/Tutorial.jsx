@@ -194,11 +194,14 @@ export default function Tutorial() {
             <button className={`scenario-tab${activeScenario === 'nicu' ? ' scenario-tab--active' : ''}`} onClick={() => setActiveScenario('nicu')}>
               👶 NICU — PPHN
             </button>
-            <button className={`scenario-tab${activeScenario === 'icu' ? ' scenario-tab--active' : ''}`} onClick={() => setActiveScenario('icu')}>
-              🫀 ICU — Post-CABG
-            </button>
             <button className={`scenario-tab${activeScenario === 'labor' ? ' scenario-tab--active' : ''}`} onClick={() => setActiveScenario('labor')}>
               🤰 Labor Room
+            </button>
+            <button className={`scenario-tab${activeScenario === 'icu' ? ' scenario-tab--active' : ''}`} onClick={() => setActiveScenario('icu')}>
+              🫀 Post-op ICU
+            </button>
+            <button className={`scenario-tab${activeScenario === 'micu' ? ' scenario-tab--active' : ''}`} onClick={() => setActiveScenario('micu')}>
+              🏥 MICU — Septic Shock
             </button>
           </div>
 
@@ -249,6 +252,31 @@ export default function Tutorial() {
                 </div>
               </div>
               <p className="tut-scenario__caption">Without OnCallDoc: the resident might have noticed the MAP drop 30 minutes later during routine rounds, by which point end-organ hypoperfusion would already have occurred for 30+ minutes post-CABG.</p>
+            </div>
+          )}
+
+          {activeScenario === 'micu' && (
+            <div>
+              <p className="scenario-context">Mr. Rajesh Mehta · 62Y M · Septic Shock + ARDS (urosepsis Day 2) · MICU Bed 4 · Invasive Vent + Vasopressors</p>
+              <div className="tut-scenario">
+                <div className="tut-event">
+                  <span className="tut-event__time">8:30 PM</span>
+                  <div className="tut-event__card">Day 2 MICU. MAP 68, SpO₂ 90% on norad 0.15 + vasopressin 0.04. FiO₂ 0.6, PEEP 10. PaO₂/FiO₂ ratio 160 — moderate ARDS. You install OnCallDoc. Set thresholds: MAP crit &lt;55 warn &lt;65; SpO₂ crit &lt;88 warn &lt;90. Type your vasopressor escalation orders on the tablet. Leave for home.</div>
+                </div>
+                <div className="tut-event">
+                  <span className="tut-event__time">1:42 AM</span>
+                  <div className="tut-event__card tut-event__card--alert">🚨 <strong>Critical alert fires</strong> — SpO₂ critically low: 85%. You open the app. Camera: patient diaphoretic, HR 132, MAP 57 (warning), SpO₂ 85%. Vasopressor may be wearing off. Possible mucus plug on top of ARDS causing the acute desaturation.</div>
+                </div>
+                <div className="tut-event">
+                  <span className="tut-event__time">1:43 AM</span>
+                  <div className="tut-event__card tut-event__card--order">You type: <em>"Increase norad to 0.25 mcg/kg/min NOW. Give 250mL albumin 20% bolus. Increase FiO₂ to 0.75, PEEP to 12. Suction ETT — check for mucus plug. Get ABG in 20 min. Call me with result."</em> Order on tablet in seconds.</div>
+                </div>
+                <div className="tut-event">
+                  <span className="tut-event__time">2:08 AM</span>
+                  <div className="tut-event__card tut-event__card--stable">MAP recovering — 63, 68. SpO₂ 90→92% after suctioning (large plug removed). HR 114. Resident calls with ABG: PaO₂/FiO₂ 155, pH 7.36. You adjust vent settings via orders panel. Crisis managed from home without driving in.</div>
+                </div>
+              </div>
+              <p className="tut-scenario__caption">SOFA score 12, ARDS, dual vasopressors — without OnCallDoc the duty resident may not have escalated appropriately at 1:42 AM. The 25-minute response delay (SpO₂ 85% → intervention) could mean severe hypoxic end-organ damage in an already frail patient. OnCallDoc: alert → order → suctioning → recovery in 26 minutes, all directed by the treating doctor remotely.</p>
             </div>
           )}
 
