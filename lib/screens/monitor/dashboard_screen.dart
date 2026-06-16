@@ -101,6 +101,36 @@ class DashboardScreen extends StatelessWidget {
             ],
           ),
 
+          // ── Demo banner ──
+          SliverToBoxAdapter(
+            child: Container(
+              margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              decoration: BoxDecoration(
+                color: AppColors.warningColor.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.warningColor.withOpacity(0.3)),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.science, size: 18, color: AppColors.warningColor),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'Demo Mode — Simulated vitals for demonstration only. '
+                      'Download Wardly and upgrade to Pro for live patient monitoring.',
+                      style: GoogleFonts.dmSans(
+                        color: AppColors.warningColor,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
           // ── Hero section ──
           SliverToBoxAdapter(
             child: Container(
