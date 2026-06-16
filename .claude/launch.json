@@ -3,9 +3,9 @@
   "configurations": [
     {
       "name": "oncalldoc",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
-      "port": 3000,
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8080", "--directory", "build/web"],
+      "port": 8080,
       "autoPort": true
     }
   ]
