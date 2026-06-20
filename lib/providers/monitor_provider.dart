@@ -20,15 +20,48 @@ class MonitorProvider extends ChangeNotifier {
   // Debounce: track last alert time per patient+vital to avoid spam
   final Map<String, DateTime> _lastAlertTime = {};
 
+  // Vitals history for trend charts: patientId → list of timestamped readings
+  final Map<String, List<VitalSnapshot>> _history = {};
+  static const int _maxHistory = 2200; // ~12 hrs at 1 reading per 20s
+
   List<Patient> get patients => _patients;
   List<Alert> get alerts => _alerts;
   List<Comment> get comments => _comments;
   bool get soundEnabled => _soundEnabled;
 
+  List<VitalSnapshot> historyFor(String patientId) => _history[patientId] ?? [];
+
   void init() {
     _patients = List.from(seedPatients);
     _comments = List.from(seedComments);
+    _seedHistory();
     _startSimulation();
+  }
+
+  void _seedHistory() {
+    final now = DateTime.now();
+    for (final p in _patients) {
+      final snapshots = <VitalSnapshot>[];
+      var vitals = Map<VitalType, double>.from(p.vitals);
+      for (int i = 720; i >= 0; i--) {
+        final time = now.subtract(Duration(minutes: i));
+        final newVitals = <VitalType, double>{};
+        for (final vt in VitalType.values) {
+          if (vt == VitalType.map) continue;
+          final cfg = p.sim[vt];
+          if (cfg == null) { newVitals[vt] = vitals[vt] ?? 0; continue; }
+          newVitals[vt] = _simStep(vitals[vt] ?? cfg.base, cfg).roundToDouble();
+          final meta = VitalMeta.all[vt]!;
+          newVitals[vt] = newVitals[vt]!.clamp(meta.min, meta.max);
+        }
+        final sbp = newVitals[VitalType.sbp] ?? 0;
+        final dbp = newVitals[VitalType.dbp] ?? 0;
+        newVitals[VitalType.map] = ((sbp + 2 * dbp) / 3).roundToDouble();
+        vitals = newVitals;
+        snapshots.add(VitalSnapshot(time, Map.from(newVitals)));
+      }
+      _history[p.id] = snapshots;
+    }
   }
 
   @override
@@ -136,6 +169,13 @@ class MonitorProvider extends ChangeNotifier {
 
       _patients[i] = p.copyWith(vitals: newVitals);
       _checkAlerts(p.id, newVitals, p.thresholds);
+
+      // Record history
+      _history.putIfAbsent(p.id, () => []);
+      _history[p.id]!.add(VitalSnapshot(DateTime.now(), Map.from(newVitals)));
+      if (_history[p.id]!.length > _maxHistory) {
+        _history[p.id]!.removeAt(0);
+      }
     }
     notifyListeners();
   }
@@ -173,4 +213,10 @@ class MonitorProvider extends ChangeNotifier {
       _lastAlertTime[key] = DateTime.now();
     }
   }
+}
+
+class VitalSnapshot {
+  final DateTime time;
+  final Map<VitalType, double> vitals;
+  const VitalSnapshot(this.time, this.vitals);
 }

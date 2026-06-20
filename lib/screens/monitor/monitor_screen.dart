@@ -12,6 +12,7 @@ import '../../widgets/bp_card.dart';
 import '../../widgets/alert_log.dart';
 import '../../widgets/comment_panel.dart';
 import '../../widgets/threshold_panel.dart';
+import 'vital_trends_screen.dart';
 
 class MonitorScreen extends StatelessWidget {
   final String patientId;
@@ -268,17 +269,47 @@ class MonitorScreen extends StatelessWidget {
   }
 
   Widget _vitalsGrid(patient) {
-    return Column(
+    return Builder(builder: (context) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'LIVE VITALS',
-          style: GoogleFonts.dmSans(
-            color: AppColors.textSecondary,
-            fontSize: 11,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1,
-          ),
+        Row(
+          children: [
+            Text(
+              'LIVE VITALS',
+              style: GoogleFonts.dmSans(
+                color: AppColors.textSecondary,
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1,
+              ),
+            ),
+            const Spacer(),
+            GestureDetector(
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => VitalTrendsScreen(
+                    patientId: patient.id,
+                    patientName: patient.name,
+                  ),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.show_chart, size: 14, color: AppColors.primary),
+                  const SizedBox(width: 4),
+                  Text(
+                    'Trends',
+                    style: GoogleFonts.dmSans(
+                      color: AppColors.primary,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 8),
         LayoutBuilder(builder: (context, constraints) {
@@ -314,7 +345,7 @@ class MonitorScreen extends StatelessWidget {
           );
         }),
       ],
-    );
+    ));
   }
 
   void _callWard(String phone) async {
